@@ -1,9 +1,28 @@
+@import '~antd/dist/antd.css';
+
 .App {
   text-align: center;
 }
 
 .container {
-  background-color: red;
+  display: flex;
+  width: 100vh;
+  height: 100vh;
+  flex-direction: column;
+}
+
+table {
+  border-width: 1px;
+  border-color: gray;
+}
+
+.modal {
+  display: flex;
+  position: absolute;
+  top: 24px;
+  bottom: 24px;
+  left: 24px;
+  right: 24px;
 }
 
 .App-logo {
