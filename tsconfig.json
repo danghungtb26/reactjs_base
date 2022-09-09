@@ -2,7 +2,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@*": ["src/*"],
+      // "@*": ["src/*"],
     },
     "target": "es6",
     "lib": [
@@ -10,6 +10,7 @@
       "dom.iterable",
       "esnext"
     ],
+    "typeRoots": ["node", "@types"],
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -30,6 +31,6 @@
   "ts-node": {
     "files": true
   },
-  "include": ["**/*.ts", "**/*.tsx", "src", "src/react-app-env.d.ts", "global.d.ts"],
+  "include": ["**/*.ts", "**/*.tsx", "src", "src/react-app-env.d.ts", "global.d.ts", "./@types/*.d.ts"],
   "exclude": ["node_modules"]
 }

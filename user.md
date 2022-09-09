@@ -1,0 +1,23 @@
+user table
+
+- id
+- first_name
+- last_name
+- birthday
+- gender
+- email
+- phone 
+- address: string
+  - lat
+  - long
+  - country
+  - province
+  - district
+  - sub_district
+  - detail
+- username
+- password
+- status 0 | 1 | 2
+- created_at
+- updated_at
+- deleted_at
