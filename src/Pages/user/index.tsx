@@ -1,37 +1,16 @@
-import { Spin, Table, TableProps } from 'antd'
+import { Button, Spin, Table, TableProps } from 'antd'
+import { error } from 'console'
 import React, { useEffect, useRef, useState } from 'react'
 import { UserApi } from 'src/apis/user'
 import Page from 'src/components/Page'
+import { useUserList } from 'src/hooks/user'
 import { fake_data, User } from 'src/models/user'
+import ModalForm, { ModalFormMethod } from './components/ModalForm'
 
 type UserPageProps = {}
 
 const UserPage: React.FC<UserPageProps> = () => {
-  const [loading, setLoading] = useState<boolean>(true)
-  const [data, setData] = useState<User[]>([])
-  const [error, setError] = useState<boolean | string>(false)
-  const [page, setPage] = useState<Page>({
-    current: 1,
-    max: 10,
-  })
-
-  useEffect(() => {
-    UserApi.list().then(r => {
-      setData(r.data)
-      if (r.page) setPage(r.page)
-      setError(false)
-      setLoading(false)
-    })
-    // setTimeout(() => {
-    //   setData(fake_data)
-    //   setError(false)
-    //   setPage({
-    //     current: 1,
-    //     max: 10,
-    //   })
-    //   setLoading(false)
-    // }, 1000)
-  }, [])
+  const { data, loading, error, page, fetch } = useUserList()
 
   const columns = useRef<TableProps<User>['columns']>([
     {
@@ -73,14 +52,29 @@ const UserPage: React.FC<UserPageProps> = () => {
   //   if (loading) return <Spin />
 
   //   if (error) return error
+  const modal = useRef<ModalFormMethod>(null)
+
+  const onCreate = () => {
+    modal.current?.setVisible(true)
+    console.log('🚀 ~ file: index.tsx ~ line 59 ~ onCreate ~ modal', modal)
+  }
+
+  const onFinished = () => {
+    fetch()
+  }
 
   return (
     <Page inner>
-      {error ? (
-        <p>{error}</p>
-      ) : (
-        <Table loading={loading} dataSource={data} columns={columns.current} />
-      )}
+      <div className="view-create">
+        <Button onClick={onCreate}>Create</Button>
+      </div>
+      <Table
+        rowKey={item => item.id}
+        loading={loading}
+        dataSource={data}
+        columns={columns.current}
+      />
+      <ModalForm ref={modal} onFinished={onFinished} />
     </Page>
   )
 }
