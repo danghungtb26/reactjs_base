@@ -13,7 +13,7 @@ export const useUserList = () => {
 
   const fetch = () => {
     UserApi.list().then(r => {
-      setData(r.data)
+      setData([...r.data])
       if (r.page) setPage(r.page)
       setError(false)
       setLoading(false)
@@ -33,6 +33,46 @@ export const useUserList = () => {
     setData,
     page,
     setPage,
+    fetch,
+  }
+}
+export const useEditOrCreate = () => {
+  const [loading, setLoading] = useState<boolean>(false)
+
+  const fetch = (param: any, id: UserInterface['id']) => {
+    return new Promise(resolve => {
+      setLoading(true)
+      //
+      if (id) {
+        UserApi.update({
+          id,
+
+          input: {
+            ...param,
+            id: id ?? param.id,
+          },
+        })
+          .then(r => {
+            setLoading(false)
+          })
+          .then(() => {
+            resolve(true)
+          })
+      } else {
+        UserApi.create({ input: param })
+          .then(r => {
+            setLoading(false)
+          })
+          .then(() => {
+            resolve(true)
+          })
+      }
+    })
+  }
+
+  return {
+    loading,
+    setLoading,
     fetch,
   }
 }

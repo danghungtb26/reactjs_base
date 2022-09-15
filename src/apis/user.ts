@@ -26,7 +26,27 @@ const create: (p: {
     }, 1000)
   })
 }
+
+const update: (p: {
+  id?: number | string
+  input: Pick<UserInterface, 'id' | 'firstName' | 'lastName' | 'gender' | 'birthday'>
+}) => Promise<BaseResponse<User>> = ({ id, input }) => {
+  return new Promise<BaseResponse<User>>(resolve => {
+    setTimeout(() => {
+      const newUser = User.fromJson(input)
+      const index = fake_data.findIndex(i => i.id === newUser.id)
+
+      if (index >= 0) {
+        fake_data[index] = newUser
+      }
+      // fake_data.push(newUser)
+      resolve({ data: newUser })
+    }, 1000)
+  })
+}
+
 export const UserApi = {
   list,
   create,
+  update,
 }

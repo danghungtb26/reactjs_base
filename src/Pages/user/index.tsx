@@ -47,6 +47,23 @@ const UserPage: React.FC<UserPageProps> = () => {
       key: 'created_at',
       dataIndex: 'created_at',
     },
+    {
+      title: 'Action',
+      key: 'action',
+      render: (_, record) => {
+        return (
+          <div>
+            <Button
+              onClick={() => {
+                onEdit(record)
+              }}
+            >
+              Edit
+            </Button>
+          </div>
+        )
+      },
+    },
   ])
 
   //   if (loading) return <Spin />
@@ -54,9 +71,14 @@ const UserPage: React.FC<UserPageProps> = () => {
   //   if (error) return error
   const modal = useRef<ModalFormMethod>(null)
 
+  const onEdit: (value: User) => void = value => {
+    modal.current?.setVisible(true)
+    modal.current?.setData?.(value)
+  }
+
   const onCreate = () => {
     modal.current?.setVisible(true)
-    console.log('🚀 ~ file: index.tsx ~ line 59 ~ onCreate ~ modal', modal)
+    // console.log('🚀 ~ file: index.tsx ~ line 59 ~ onCreate ~ modal', modal)
   }
 
   const onFinished = () => {

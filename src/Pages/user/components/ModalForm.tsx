@@ -1,6 +1,8 @@
 import { Button, Form, FormInstance, Input, Modal } from 'antd'
-import React, { useImperativeHandle, useRef, useState } from 'react'
+import form from 'antd/lib/form'
+import React, { useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { UserApi } from 'src/apis/user'
+import { useEditOrCreate } from 'src/hooks/user'
 import { generateId, User } from 'src/models/user'
 import { ColDefaultProps, defaultFormItemLayout } from 'src/themes/styles'
 
@@ -18,9 +20,18 @@ export type ModalFormMethod = {
 
 const ModalForm = React.forwardRef<ModalFormMethod, ModalFormProps>(({ onFinished }, ref) => {
   const [visible, setVisible] = useState<boolean>(false)
-  const [loading, setLoading] = useState<boolean>(false)
+  const [data, setData] = useState<User>()
 
   const form = useRef<FormInstance>(null)
+
+  const { fetch, loading } = useEditOrCreate()
+
+  useEffect(() => {
+    form.current?.setFields([
+      { name: 'first_name', value: data?.firstName ?? '' },
+      { name: 'last_name', value: data?.lastName ?? '' },
+    ])
+  }, [data])
 
   useImperativeHandle(ref, () => {
     return {
@@ -30,31 +41,17 @@ const ModalForm = React.forwardRef<ModalFormMethod, ModalFormProps>(({ onFinishe
           form.current?.resetFields()
         }
       },
-      setData: value => {},
+      setData: value => {
+        setData(value)
+      },
       getVisible: () => visible,
       aaaa: 'Hung',
     }
   })
 
-  const onSubmit = value => {
-    const param = {
-      id: generateId(),
-      firstName: value.first_name,
-      lastName: value.last_name,
-      gender: 1 as 0 | 1,
-      birthday: '26/01/1997',
-    }
-    setLoading(true)
-    //
-    UserApi.create({ input: param }).then(r => {
-      setLoading(false)
-      setVisible(false)
-    })
+  const onSubmit = value => {}
 
-    onFinished()
-  }
-
-  const onOk = () => {
+  const onOk = async () => {
     const param = {
       id: generateId(),
       firstName: form.current?.getFieldValue('first_name') ?? '',
@@ -62,14 +59,12 @@ const ModalForm = React.forwardRef<ModalFormMethod, ModalFormProps>(({ onFinishe
       gender: 1 as 0 | 1,
       birthday: '26/01/1997',
     }
-    setLoading(true)
-    //
-    UserApi.create({ input: param }).then(r => {
-      setLoading(false)
-      setVisible(false)
-    })
 
-    onFinished()
+    const check = await fetch(param, data?.id ?? '')
+    if (check) {
+      setVisible(false)
+      onFinished()
+    }
   }
 
   return (
